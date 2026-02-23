@@ -5,13 +5,14 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, Plus, Trash2, Circle, CheckCircle2, Moon, Sun } from "lucide-react";
+import { Check, Plus, Trash2, Circle, CheckCircle2, Moon, Sun, Loader2 } from "lucide-react";
 import { Todo } from "./types";
 
 export default function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -48,8 +49,9 @@ export default function App() {
 
   const addTodo = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTodo.trim()) return;
+    if (!newTodo.trim() || isAdding) return;
 
+    setIsAdding(true);
     try {
       const res = await fetch("/api/todos", {
         method: "POST",
@@ -61,6 +63,8 @@ export default function App() {
       setNewTodo("");
     } catch (error) {
       console.error("Failed to add todo:", error);
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -139,10 +143,10 @@ export default function App() {
           />
           <button
             type="submit"
-            disabled={!newTodo.trim()}
+            disabled={!newTodo.trim() || isAdding}
             className="absolute right-2 top-2 bottom-2 aspect-square flex items-center justify-center bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 disabled:hover:bg-zinc-900 dark:disabled:hover:bg-zinc-100 transition-colors"
           >
-            <Plus size={20} />
+            {isAdding ? <Loader2 size={20} className="animate-spin" /> : <Plus size={20} />}
           </button>
         </form>
 
