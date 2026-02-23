@@ -1,0 +1,5 @@
+{
+  "name": "Minimalist Todo List",
+  "description": "A personalized, minimalist modern todo list application with SQLite backend.",
+  "requestFramePermissions": []
+}
